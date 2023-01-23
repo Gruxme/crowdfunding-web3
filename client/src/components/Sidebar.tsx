@@ -24,7 +24,7 @@ const Icon = ({
     className={`w-[48px] h-[48px] rounded-[10px] ${
       isActive && isActive === name && 'bg-[#2c2f32]'
     } flex justify-center items-center ${
-      !disabled && 'cursor-pointer'
+      disabled && 'cursor-default'
     } ${styles}`}
     onClick={handleclick}
   >
