@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { Sidebar, Navbar } from './components';
-import { Home, CampaignDetails, CreateCampaign, Profile} from './pages';
+import { Home, CampaignDetails, CreateCampaign, Profile } from './pages';
 
 const App = () => {
   return (
@@ -12,6 +12,9 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path='/' element={<Home />} />
+          <Route path='/profile' element={<Profile />} />
+          <Route path='/create-campaign' element={<CreateCampaign />} />
+          <Route path='/campaign-details/:id' element={<CampaignDetails />} />
         </Routes>
       </div>
     </div>
