@@ -1,4 +1,4 @@
-import React, { useContext, createContext } from 'react';
+import React, { useContext, createContext, useState } from 'react';
 import {
   useAddress,
   useContract,
@@ -17,6 +17,8 @@ type StateContextProps = {
 type StateContext = {
   address: string | undefined;
   contract: SmartContract<ethers.BaseContract> | undefined;
+  setCurrentPage: (name: string) => void;
+  activePage: string;
   connect: () => Promise<
     | {
         data?: ConnectorData<any> | undefined;
@@ -55,6 +57,13 @@ export interface ParsedCampaign {
 
 const StateContext = createContext({} as StateContext);
 export const StateContextProvider = ({ children }: StateContextProps) => {
+  const [activePage, setActivePage] = useState('dashboard');
+
+  const setCurrentPage = (name: string) => {
+    setActivePage(name);
+    console.log('set current page to: ', activePage);
+  };
+
   const { contract } = useContract(
     '0x04d0619A8b8Aa0a4667078a3DB66ddA49eC93cfA',
   );
@@ -121,6 +130,8 @@ export const StateContextProvider = ({ children }: StateContextProps) => {
         createCampaign: publishCampaign,
         getCampaigns,
         getUserCampaigns,
+        activePage,
+        setCurrentPage,
       }}
     >
       {children}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logo, sun } from '../assets';
 import { navlinks } from '../constants';
+import { useStateContext } from '../context';
 
 type IconProps = {
   imgUrl: string;
@@ -41,11 +42,11 @@ const Icon = ({
 );
 
 const Sidebar = () => {
+  const { activePage, setCurrentPage } = useStateContext();
   const navigate = useNavigate();
-  const [isActive, setIsActive] = useState('dashboard');
   return (
     <div className='flex justify-between items-center flex-col sticky top-5 h-[93vh]'>
-      <Link to='/'>
+      <Link to='/' onClick={() => setCurrentPage('dashboard')}>
         <Icon styles='w-[52px] h-[52px] bg-[#2c2f32]' imgUrl={logo} />
       </Link>
 
@@ -57,10 +58,10 @@ const Sidebar = () => {
               name={link.name}
               imgUrl={link.imgUrl}
               disabled={link.disabled}
-              isActive={isActive}
+              isActive={activePage}
               handleclick={() => {
                 if (!link.disabled) {
-                  setIsActive(link.name);
+                  setCurrentPage(link.name);
                   navigate(link.link);
                 }
               }}

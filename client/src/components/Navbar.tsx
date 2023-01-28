@@ -7,7 +7,7 @@ import { useStateContext } from '../context';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [isActive, setIsActive] = useState('dashboard');
+  const { activePage, setCurrentPage } = useStateContext();
   const [toggleDrawer, setToggleDrawer] = useState(false);
   const { connect, address } = useStateContext();
 
@@ -36,7 +36,7 @@ const Navbar = () => {
             address ? navigate('create-campaign') : connect()
           }
         />
-        <Link to='/profile'>
+        <Link to='/profile' onClick={() => setCurrentPage('profile')}>
           <div className='w-[52px] h-[52px] rounded-full bg-[#2c2f32] flex justify-center items-center'>
             <img src={thirdweb} alt='user' className='h-[60%] w-[60%]' />
           </div>
@@ -45,9 +45,13 @@ const Navbar = () => {
 
       {/* small screen navigation */}
       <div className='sm:hidden flex justify-between items-center relative'>
-        <div className='w-[40px] h-[40px] rounded-[10px] bg-[#2c2f32] flex justify-center items-center cursor-pointer'>
+        <Link
+          to='/'
+          className='w-[40px] h-[40px] rounded-[10px] bg-[#2c2f32] flex justify-center items-center cursor-pointer'
+          onClick={() => setCurrentPage('dashboard')}
+        >
           <img src={logo} alt='user' className='h-[60%] w-[60%]' />
-        </div>
+        </Link>
         <button onClick={() => setToggleDrawer(!toggleDrawer)}>
           <img
             src={menu}
@@ -64,12 +68,12 @@ const Navbar = () => {
             {navlinks.map((link) => (
               <li
                 key={link.name}
-                className={`${isActive === link.name ? 'bg-[#3a3a43]' : ''}`}
+                className={`${activePage === link.name ? 'bg-[#3a3a43]' : ''}`}
               >
                 <button
                   className='flex p-4 w-full'
                   onClick={() => {
-                    setIsActive(link.name);
+                    setCurrentPage(link.name);
                     setToggleDrawer(false);
                     navigate(link.link);
                   }}
@@ -78,12 +82,12 @@ const Navbar = () => {
                     src={link.imgUrl}
                     alt={link.name}
                     className={`w-[24px] h-[24px] object-contain ${
-                      isActive === link.name ? 'grayscale-0' : 'grayscale'
+                      activePage === link.name ? 'grayscale-0' : 'grayscale'
                     }`}
                   />
                   <p
                     className={`ml-[20px] font-epilogue font-semibold text-[14px] ${
-                      isActive === link.name
+                      activePage === link.name
                         ? 'text-[#1dc071]'
                         : 'text-[#808191]'
                     }`}
