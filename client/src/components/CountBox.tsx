@@ -1,6 +1,6 @@
 interface CountBoxProps {
   title: string;
-  value: number;
+  value: string;
 }
 
 const CountBox = ({ title, value }: CountBoxProps) => {
