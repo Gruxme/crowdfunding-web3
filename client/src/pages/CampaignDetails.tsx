@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ethers } from 'ethers';
 import { ParsedCampaign, ParsedDonator, useStateContext } from '../context';
-import { CustomButton, CountBox } from '../components';
+import { CustomButton, CountBox, FormField, Loader } from '../components';
 import { calculateBarPercentage, daysLeft } from '../utils';
 import { thirdweb } from '../assets';
-import { FormField } from '../components';
 
 interface LocationState {
   campaign: ParsedCampaign;
@@ -43,12 +41,13 @@ const CampaignDetails = () => {
     } catch (error) {
       console.log('Failed to donate to campaign. Error: ', error);
     }
+    await fetchDonations();
     setIsLoading(false);
   };
 
   return (
     <div>
-      {isLoading && 'Loading...'}
+      {isLoading && <Loader />}
       <div className='w-full flex md:flex-row flex-col mt-10 gap-[30px]'>
         <div className='flex-1 flex-col'>
           <img
