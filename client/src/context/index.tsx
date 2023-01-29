@@ -4,8 +4,9 @@ import {
   useContract,
   useMetamask,
   useContractWrite,
+  useDisconnect,
 } from '@thirdweb-dev/react';
-import { BigNumber, BigNumberish, ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { CreateCampaignForm } from '../types/createCampaign.interface';
 import { ConnectorData } from 'wagmi-core';
 import { SmartContract } from '@thirdweb-dev/sdk';
@@ -46,15 +47,21 @@ type StateContext = {
   contract: SmartContract<ethers.BaseContract> | undefined;
   setCurrentPage: (name: string) => void;
   activePage: string;
-  connect: () => Promise<
-    | {
-        data?: ConnectorData<any> | undefined;
-        error?: Error | undefined;
-      }
-    | {
-        error: Error;
-      }
+  connect: () => Promise<{
+    data?: ConnectorData<any> | undefined;
+    error?: Error | undefined;
+    } | {
+      error: Error;
+    }
   >;
+  disconnect: (
+    options?: {
+      reconnectPrevious?: boolean | undefined;
+    } | undefined,
+  ) => Promise<void | {
+    data?: ConnectorData<any> | undefined;
+    error?: Error | undefined;
+  }>;
   createCampaign: (form: CreateCampaignForm) => Promise<void>;
   getCampaigns: () => Promise<ParsedCampaign[]>;
   getUserCampaigns: () => Promise<ParsedCampaign[]>;
@@ -81,6 +88,7 @@ export const StateContextProvider = ({ children }: StateContextProps) => {
 
   const address = useAddress();
   const connect = useMetamask();
+  const disconnect = useDisconnect();
 
   const publishCampaign = async (form: CreateCampaignForm) => {
     try {
@@ -156,6 +164,7 @@ export const StateContextProvider = ({ children }: StateContextProps) => {
         address,
         contract,
         connect,
+        disconnect,
         createCampaign: publishCampaign,
         getCampaigns,
         getUserCampaigns,

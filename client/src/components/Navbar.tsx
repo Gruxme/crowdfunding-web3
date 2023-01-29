@@ -7,9 +7,9 @@ import { useStateContext } from '../context';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { activePage, setCurrentPage } = useStateContext();
+  const { activePage, setCurrentPage, disconnect, connect, address } =
+    useStateContext();
   const [toggleDrawer, setToggleDrawer] = useState(false);
-  const { connect, address } = useStateContext();
 
   return (
     <div className='flex md:flex-row flex-col-reverse justify-between mb-[35px] gap-6'>
@@ -74,9 +74,15 @@ const Navbar = () => {
                 <button
                   className='flex p-4 w-full'
                   onClick={() => {
-                    setCurrentPage(link.name);
-                    setToggleDrawer(false);
-                    navigate(link.link);
+                    if (link.name === 'logout') {
+                      disconnect();
+                      setToggleDrawer(false);
+                      navigate('/');
+                    } else {
+                      setCurrentPage(link.name);
+                      setToggleDrawer(false);
+                      navigate(link.link);
+                    }
                   }}
                 >
                   <img
@@ -104,9 +110,10 @@ const Navbar = () => {
               btnType='button'
               title={address ? 'Create a campaign' : 'Connect'}
               styles={address ? 'bg-[#1dc071]' : 'bg-[#8c6dfd]'}
-              handleClick={() =>
-                address ? navigate('create-campaign') : connect()
-              }
+              handleClick={() => {
+                address ? navigate('create-campaign') : connect();
+                setToggleDrawer(false);
+              }}
             />
           </div>
         </div>
