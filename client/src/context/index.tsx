@@ -14,25 +14,6 @@ type StateContextProps = {
   children: React.ReactNode;
 };
 
-type StateContext = {
-  address: string | undefined;
-  contract: SmartContract<ethers.BaseContract> | undefined;
-  setCurrentPage: (name: string) => void;
-  activePage: string;
-  connect: () => Promise<
-    | {
-        data?: ConnectorData<any> | undefined;
-        error?: Error | undefined;
-      }
-    | {
-        error: Error;
-      }
-  >;
-  createCampaign: (form: CreateCampaignForm) => Promise<void>;
-  getCampaigns: () => Promise<ParsedCampaign[]>;
-  getUserCampaigns: () => Promise<ParsedCampaign[]>;
-};
-
 interface ContractCampaign {
   owner: string;
   title: string;
@@ -54,6 +35,32 @@ export interface ParsedCampaign {
   image: string;
   id: number;
 }
+
+export type ParsedDonator = {
+  donator: string;
+  donation: string;
+};
+
+type StateContext = {
+  address: string | undefined;
+  contract: SmartContract<ethers.BaseContract> | undefined;
+  setCurrentPage: (name: string) => void;
+  activePage: string;
+  connect: () => Promise<
+    | {
+        data?: ConnectorData<any> | undefined;
+        error?: Error | undefined;
+      }
+    | {
+        error: Error;
+      }
+  >;
+  createCampaign: (form: CreateCampaignForm) => Promise<void>;
+  getCampaigns: () => Promise<ParsedCampaign[]>;
+  getUserCampaigns: () => Promise<ParsedCampaign[]>;
+  donate: (id: number, amount: string) => Promise<any>;
+  getDonators: (id: number) => Promise<ParsedDonator[]>;
+};
 
 const StateContext = createContext({} as StateContext);
 export const StateContextProvider = ({ children }: StateContextProps) => {
@@ -100,11 +107,9 @@ export const StateContextProvider = ({ children }: StateContextProps) => {
         owner: campaign.owner,
         title: campaign.title,
         description: campaign.description,
-        target: ethers.utils.formatEther(campaign.target.toString()),
+        target: ethers.utils.formatEther(campaign.target),
         deadline: campaign.deadline.toNumber(),
-        amountCollected: ethers.utils.formatEther(
-          campaign.amountCollected.toString(),
-        ),
+        amountCollected: ethers.utils.formatEther(campaign.amountCollected),
         image: campaign.image,
         id: i,
       }),
@@ -121,6 +126,30 @@ export const StateContextProvider = ({ children }: StateContextProps) => {
     return UserCampaigns;
   };
 
+  const donate = async (id: number, amount: string) => {
+    const response = await contract?.call('donateToCampaign', id, {
+      value: ethers.utils.parseEther(amount),
+    });
+    console.log('donate response: ', response);
+    return response;
+  };
+
+  const getDonators = async (id: number): Promise<ParsedDonator[]> => {
+    const donators = await contract?.call('getDonators', id);
+    const numberOfDonations = donators[0].length;
+
+    const parsedDonators = [] as ParsedDonator[];
+
+    for (let i = 0; i < numberOfDonations; i++) {
+      parsedDonators.push({
+        donator: donators[0][i],
+        donation: ethers.utils.formatEther(donators[1][i].toString()),
+      });
+    }
+
+    return parsedDonators;
+  };
+
   return (
     <StateContext.Provider
       value={{
@@ -132,6 +161,8 @@ export const StateContextProvider = ({ children }: StateContextProps) => {
         getUserCampaigns,
         activePage,
         setCurrentPage,
+        donate,
+        getDonators,
       }}
     >
       {children}

@@ -17,7 +17,7 @@ const DisplayCampaigns = ({
   const navigate = useNavigate();
   const handleNavigate = (campaign: ParsedCampaign) => {
     navigate(`/campaign-details/${campaign.id}`, {
-      state: campaign,
+      state: { campaign },
     });
   };
   return (

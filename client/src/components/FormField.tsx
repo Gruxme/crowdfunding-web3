@@ -5,6 +5,7 @@ interface FormFieldProps {
   placeholder: string;
   inputType?: string;
   isTextArea?: boolean;
+  step?: number;
   value: string;
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -15,6 +16,7 @@ const FormField = ({
   LabelName,
   placeholder,
   inputType,
+  step,
   value,
   isTextArea,
   handleChange,
@@ -41,7 +43,7 @@ const FormField = ({
           value={value}
           onChange={handleChange}
           type={inputType}
-          step='0.1'
+          step={step}
           placeholder={placeholder}
           className='py-[15px] sm:px-[25px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-white text-[14px] placeholder:text-[#4b5264] rounded-[10px] sm:min-w-[300px]'
         />
