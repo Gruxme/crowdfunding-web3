@@ -33,8 +33,12 @@ const Navbar = () => {
           title={address ? 'Create a campaign' : 'Connect'}
           styles={address ? 'bg-[#1dc071]' : 'bg-[#8c6dfd]'}
           handleClick={() => {
-            address ? navigate('create-campaign') : connect();
-            setCurrentPage('create-campaign');
+            if (address) {
+              navigate('create-campaign');
+              setCurrentPage('create-campaign');
+            } else {
+              connect();
+            }
           }}
         />
         <Link to='/profile' onClick={() => setCurrentPage('profile')}>
@@ -76,6 +80,7 @@ const Navbar = () => {
                   onClick={() => {
                     if (link.name === 'logout') {
                       disconnect();
+                      setCurrentPage('dashboard');
                       setToggleDrawer(false);
                       navigate('/');
                     } else {

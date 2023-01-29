@@ -76,6 +76,7 @@ const Sidebar = () => {
           imgUrl={logout}
           handleclick={() => {
             disconnect();
+            setCurrentPage('dashboard');
             navigate('/');
           }}
         />
